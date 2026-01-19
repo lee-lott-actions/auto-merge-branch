@@ -1,27 +1,4 @@
-# GitHub Action
-
-Description of what the GitHub Action does.
-
-## Features
-- Feature #1
-- Feature #2
-- Feature #3
-
-## Inputs
-| Name          | Description                                           | Required | Default |
-|---------------|-------------------------------------------------------|----------|---------|
-| `input-1`     | Description of input-1.                               | Yes      | N/A     |
-| `input-2`     | Description of input-2.                               | Yes      | N/A     |
-| `input-3`     | Description of input-3.                               | Yes      | N/A    |
-
-## Outputs
-| Name           | Description                                                   |
-|----------------|---------------------------------------------------------------|
-| `result`       | Result of the action ("success" or "failure").                |
-| `error-message`| Error message if the action fails.                            |
-
-## Usage
-1. **Add the Action to Your Workflow**:# Auto Merge Branch Action
+# Auto Merge Branch Action
 
 This GitHub Action automatically merges one branch into another branch in your repository using the GitHub REST API and a set of helper actions. It creates a pull request from the source branch to the target branch, comments on it, and then completes the merge—helpful for keeping long-lived branches in sync or automating promotion flows.
 
@@ -96,7 +73,7 @@ jobs:
 
 ## Notes
 
-- The action assumes that the `la-actions/create-pull-request`, `la-actions/merge-pull-request`, and `la-actions/set-pull-request-review-status` actions are available in your marketplace.
+- The action assumes that the `lee-lott-actions/create-pull-request`, `lee-lott-actions/merge-pull-request`, and `lee-lott-actions/set-pull-request-review-status` actions are available in your marketplace.
 - The token provided must have permissions to create and merge pull requests, typically `repo` or `contents` scopes.
 - If an error occurs at any stage, the result will be set as `failure`, and you can check the logs for details.
 
@@ -106,10 +83,4 @@ jobs:
 
 - **Promoting code from one environment branch to another** (e.g., staging → main).
 - **Keeping release branches up-to-date** with ongoing development.
-- **Automated branch sync for hotfix or long-lived support branches**.
-
----
-
-**Author:** Louisiana Office of Technology Services
-
----
+- **Automated branch sync for hotfix or long-lived support branches**.\
