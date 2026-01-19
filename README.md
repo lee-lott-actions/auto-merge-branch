@@ -21,34 +21,95 @@ Description of what the GitHub Action does.
 | `error-message`| Error message if the action fails.                            |
 
 ## Usage
-1. **Add the Action to Your Workflow**:
-   Create or update a workflow file (e.g., `.github/workflows/your-action.yml`) in your repository.
+1. **Add the Action to Your Workflow**:# Auto Merge Branch Action
 
-2. **Reference the Action**:
-   Use the action by referencing the repository and version (e.g., `v1`).
+This GitHub Action automatically merges one branch into another branch in your repository using the GitHub REST API and a set of helper actions. It creates a pull request from the source branch to the target branch, comments on it, and then completes the merge—helpful for keeping long-lived branches in sync or automating promotion flows.
 
-3. **Example Workflow**:
-   ```yaml
-   name: Your Action
-   on:
-     issues:
-       types: [labeled]
-   jobs:
-     open-issue:
-       runs-on: ubuntu-latest
-       steps:
-         - name: Run Action
-           id: open
-           uses: lee-lott-actions/your-action@v1
-           with:
-             input-1: '1'
-             input-2: '2'
-             input-3: '3'
-         - name: Print Result
-           run: |
-             if [[ "${{ steps.open.outputs.result }}" == "success" ]]; then
-               echo "Issue #${{ github.event.issue.number }} successfully opened."
-             else
-               echo "Error: ${{ steps.open.outputs.error-message }}"
-               exit 1
-             fi
+---
+
+## Features
+
+- Creates a pull request to merge changes from `source-branch` (head) into `target-branch` (base).
+- Comments and approves the pull request automatically.
+- Merges the pull request if all previous steps succeed.
+- Provides clear status output (`success` or `failure`).
+- Suitable for scheduled sync, release promotion, branch updating, and more.
+
+---
+
+## Inputs
+
+| Name            | Description                                       | Required |
+|-----------------|---------------------------------------------------|----------|
+| `repo-name`     | The name of the repository.                       | Yes      |
+| `org-name`      | The name of the GitHub organization.              | Yes      |
+| `source-branch` | The branch you want to merge from (head).         | Yes      |
+| `target-branch` | The branch you want to merge into (base).         | Yes      |
+| `token`         | GitHub token with access to pull requests.        | Yes      |
+
+---
+
+## Outputs
+
+| Name     | Description                                                                    |
+|----------|--------------------------------------------------------------------------------|
+| `result` | Result of the attempt to update PR status: `"success"` or `"failure"`          |
+
+---
+
+## Usage
+
+**Example Workflow:**
+
+```yaml
+name: Auto Merge Release into Main
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 1-5' # every weekday at 6am UTC
+
+jobs:
+  auto-merge-branches:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Auto Merge dev into main
+        uses: lee-lott-actions/auto-merge-branch@v1
+        with:
+          repo-name: 'your-repo-name'
+          org-name: 'your-org-name'
+          source-branch: 'dev'
+          target-branch: 'main'
+          token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+---
+
+## How It Works
+
+1. **Create Pull Request**: Opens a PR from `source-branch` to `target-branch` if one does not exist.
+2. **Comment on PR**: Adds a comment approving the PR as part of synchronization.
+3. **Merge PR**: Merges the PR using the standard "merge" method.
+4. **Status Output**: Sets the result output (`success` or `failure`) and logs an explanatory message in the workflow run.
+
+---
+
+## Notes
+
+- The action assumes that the `la-actions/create-pull-request`, `la-actions/merge-pull-request`, and `la-actions/set-pull-request-review-status` actions are available in your marketplace.
+- The token provided must have permissions to create and merge pull requests, typically `repo` or `contents` scopes.
+- If an error occurs at any stage, the result will be set as `failure`, and you can check the logs for details.
+
+---
+
+## Common Use Cases
+
+- **Promoting code from one environment branch to another** (e.g., staging → main).
+- **Keeping release branches up-to-date** with ongoing development.
+- **Automated branch sync for hotfix or long-lived support branches**.
+
+---
+
+**Author:** Louisiana Office of Technology Services
+
+---
